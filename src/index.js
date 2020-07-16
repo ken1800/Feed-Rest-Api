@@ -154,19 +154,7 @@ app.get("/seed", (req, res) => {
                         table.timestamp("seen_at");
                         table.foreign('author').references('userId').inTable('users');
                     })
-                    // .then(function() {
-                    //     const records = {
-                    //         tweetId: 1,
-                    //         author: 2,
-                    //         liked_at: new Date()
-                    //     }
-                    //     console.log(records, "records")
-                    //     db("likes")
-                    //         .insert(records)
-                    //         .then(() => {
-                    //             res.send("Seeded likes data");
-                    //         });
-                    // });
+
             } else {
                 res.send(" Feeds Table exists ");
             }

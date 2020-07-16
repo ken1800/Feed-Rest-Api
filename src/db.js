@@ -2,8 +2,8 @@ const db = require("knex")({
     client: "pg",
     connection: {
         host: "localhost",
-        user: "ken",
-        password: "secret",
+        user: "proff",
+        password: "proff1800",
         database: "feeds",
     },
 });

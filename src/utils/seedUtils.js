@@ -102,6 +102,43 @@ const seedFunc = ({
     }).catch((error) => {
         console.log(error)
     })
+    db.schema.hasTable("feeds").then(function(exists) {
+
+        if (!exists) {
+            db.schema
+                .createTable("feeds", function(table) {
+                    table.increments("feed_id").primary();
+                    table.integer('author').unsigned().notNullable();
+                    table.timestamp('time_created');
+                    table.integer("activity_id");
+                    table.string("activity_type");
+                    table.timestamp("seen_at");
+                    table.foreign('author').references('userId').inTable('users');
+                }).then(function() {
+                    const records = {
+                        author: 1,
+                        time_created: new Date(),
+                        activity_id: 2,
+                        activity_type: "tweeted",
+                        seen_at: new Date()
+
+                    }
+                    console.log(records, "records")
+                    db("feeds")
+                        .insert(records)
+                        .then(() => {
+                            // res.send("Seeded Feeds data");
+                            console.log("feeds created succesfully")
+                        });
+                });
+        } else {
+
+            console.log("Feeds Table exists - Seeded data")
+        }
+    }).catch((error) => {
+        console.log(error)
+    })
+
 
     db.schema.hasTable("likes").then(function(exists) {
         if (!exists) {
@@ -135,26 +172,12 @@ const seedFunc = ({
         console.log(error)
     })
 
-    db.schema.hasTable("feed").then(function(exists) {
-            if (!exists) {
-                db.schema
-                    .createTable("feed", function(table) {
-                        table.increments("feed_id").primary();
-                        table.timestamp('time_created');
-                        table.integer('author').unsigned().notNullable();
-                        table.integer("activity_id");
-                        table.string("activity_type");
-                        table.timestamp("seen_at");
-                        table.foreign('author').references('userId').inTable('users');
-                    })
 
-            } else {
-                console.log("Feeds Table exists - Seeded data")
-            }
-        })
-        .catch((error) => {
-            console.log(error)
-        })
+
+
+
+
+
 
 }
 

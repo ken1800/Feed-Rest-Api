@@ -1,8 +1,8 @@
+require('dotenv').config()
 const {
     config: {
         app,
         db,
-        port
     }
 } = require("./config")
 const {
@@ -12,6 +12,14 @@ const {
     addTweets,
     selectTweets
 } = require("./utils/tweetUtils")
+
+const {
+    seedTweetsToFeed,
+    selectFeeds,
+    getfeeds,
+    selectUser
+} = require("./utils/feedsUtils")
+
 
 
 app.set("db", db);
@@ -37,7 +45,8 @@ app.get("/seed", (req, res) => {
 });
 
 
-app.get("/getdata", (req, res) => {
+//All tweets end point
+app.get("/tweets", (req, res) => {
 
     // selectes all the tweets from the tweets table -returns an array of tweets objects
     selectTweets().then((data) => {
@@ -49,6 +58,27 @@ app.get("/getdata", (req, res) => {
 });
 
 
+// get feeds ENDPOINT
+app.get("/seedFeeds", (req, res) => {
+    // get all tweets and pass it to feeds table
+    selectTweets().then((data) => {
+        seedTweetsToFeed(data)
+
+    }).catch((error) => {
+        console.log(error, "there was an error")
+    });
+
+    res.send("Tweeets added to feeds");
+});
+
+// All feeds API endpoint
+app.get("/feed", async(req, res) => {
+    await selectFeeds().then((data) => {
+        res.send(getfeeds(data))
+            // res.json(data)
+    })
+});
+
 
 
 app.get("/", (req, res) => {
@@ -57,8 +87,8 @@ app.get("/", (req, res) => {
 
 
 
-app.listen(port, () => {
+app.listen(process.env.PORT, () => {
     console.log(
-        `application listening at port ${port} || ${console.log(new Date())}`
+        `application listening at port ${process.env.PORT} || ${new Date()}`
     );
 });

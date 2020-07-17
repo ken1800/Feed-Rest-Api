@@ -1,7 +1,6 @@
 const {
     config: {
         db,
-        faker,
     }
 } = require("../config")
 
@@ -26,8 +25,9 @@ const addTweets = () => {
 
 }
 
-const selectTweets = () => {
-    return db.select("*").from("tweets").then(rows => rows);
+const selectTweets = async() => {
+    const rows = await db.select("*").from("tweets");
+    return rows;
 }
 
 

@@ -18,10 +18,9 @@ const dammyDataTweet = {
     tweeted_at: new Date()
 }
 
-const addTweets = () => {
-    return db.insert(dammyDataTweet).into("tweets").returning("*").then(rows => {
-        return rows[0];
-    });
+const addTweets = async() => {
+    const rows = await db.insert(dammyDataTweet).into("tweets").returning("*");
+    return rows[0];
 
 }
 

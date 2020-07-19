@@ -54,11 +54,10 @@ const selectFeeds = async() => {
 }
 
 
-// select specific user
+// select specific user object returned
 const selectUser = async(id) => {
     try {
         const user = await db.select("name").from("users").where('userId', id);
-        // console.log("user", user.map((n) => n.name))
         return user;
     } catch (error) {
         console.log(error)
@@ -73,23 +72,18 @@ const getfeeds = async(feeds) => {
             return fed
         })
 
+        // returns a promise of the modified feeds data with the user added
+        const feedsPromise = await feed.map(async(data) => {
+            try {
 
-        const feedMod = await feed.map(async(data) => {
-                try {
-
-                    const nam = await selectUser(data.author)
-                    const stmnt = `On ${data.time_created.toString().slice(0, -48)} at ${data.time_created.toTimeString().slice(0, -31)}  ${nam.map((n) => n.name)} ${data.activity_type} `
-                    return stmnt
-
-
-                } catch (error) {
-                    console.log("mapping feeds error", error)
-                }
-            })
-            // this will retun a promise with data
-        return feedMod
-
-
+                const nam = await selectUser(data.author)
+                const stmnt = `On ${data.time_created.toString().slice(0, -48)} at ${data.time_created.toTimeString().slice(0, -31)}  ${nam.map((n) => n.name)} ${data.activity_type} `
+                return stmnt
+            } catch (error) {
+                console.log("mapping feeds error", error)
+            }
+        })
+        return feedsPromise
     } catch (error) {
         console.log("get feeds error", error)
     }

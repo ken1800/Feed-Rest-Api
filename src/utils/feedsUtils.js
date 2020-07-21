@@ -45,49 +45,29 @@ const seedTweetsToFeed = async(tweets) => {
 
 // select feeds from feeds table
 const selectFeeds = async() => {
-    try {
-        const feeds = await db.select("*").from("feeds").orderBy('feed_id');
-        return feeds;
-    } catch (error) {
-        return error
-    }
+    return await db.select("*").from("feeds");
 }
-
 
 // select specific user object returned
 const selectUser = async(id) => {
-    try {
-        const user = await db.select("name").from("users").where('userId', id);
-        return user;
-    } catch (error) {
-        console.log(error)
-    }
+    return await db.select("*").from("users").where('userId', id).first();
+}
+
+const getTweet = async(id) => {
+    return await db.select("*").from("tweets").where('tweets_id', id).first();
 }
 
 //  function to get the feeds
-const getfeeds = async(feeds) => {
-    // output the  feeds 
-    try {
-        const feed = await feeds.map((fed) => {
-            return fed
-        })
-
-        // returns a promise of the modified feeds data with the user added
-        const feedsPromise = await feed.map(async(data) => {
-            try {
-
-                const nam = await selectUser(data.author)
-                const stmnt = `On ${data.time_created.toString().slice(0, -48)} at ${data.time_created.toTimeString().slice(0, -31)}  ${nam.map((n) => n.name)} ${data.activity_type} `
-                return stmnt
-            } catch (error) {
-                console.log("mapping feeds error", error)
-            }
-        })
-        return feedsPromise
-    } catch (error) {
-        console.log("get feeds error", error)
-    }
-
+async function getfeeds(){
+    const rawFeed = await selectFeeds()
+    return rawFeed.map((feedItem) => {
+        feedItem.user = await selectUser(feedItem.author)
+        if(feedItem.activity_type === 'tweet') {
+            const tweet = await getTweet(feedItem.activity_id)
+            feedItem.resource = tweet.post
+        }
+        return feedItem
+    })
 }
 
 
@@ -95,3 +75,4 @@ exports.seedTweetsToFeed = seedTweetsToFeed
 exports.selectFeeds = selectFeeds
 exports.getfeeds = getfeeds
 exports.selectUser = selectUser
+exports.getTweet = getTweet

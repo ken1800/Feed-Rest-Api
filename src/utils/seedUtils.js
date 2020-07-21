@@ -171,14 +171,6 @@ const seedFunc = ({
     }).catch((error) => {
         console.log(error)
     })
-
-
-
-
-
-
-
-
 }
 
 exports.seedFunc = seedFunc;
